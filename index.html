@@ -23,6 +23,7 @@
                 <input type="textarea" class="form-control" id="Second" placeholder="दूसरे खिलाड़ी का नाम">
             </div>
             <button type="submit" onclick="game_open(event)" class="btn btn-primary">Submit</button>
+            <div id="error" style="color: red; font-size: 15px; margin-top: 5px;"></div>
         </form>
     </div>
 
@@ -39,34 +40,24 @@
                 <div class="">
                     <input type="textarea" class="form-control" id="Secondplayer" placeholder="दूसरा खिलाड़ी">
                 </div>
+
             </form>
         </div>
-        <div style="width: 302px;border: 2px solid black; margin-top: 20px;">
-            <div class="d-flex bg-light ">
-                <div style="width: 100px; height: 100px;"></div>
-                <div style="width: 2px;background-color: black; height: 100px;"></div>
-                <div style="width: 100px; height: 100px;"></div>
-                <div style="width: 2px;background-color: black; height: 100px;"></div>
-                <div style="width: 100px; height: 100px;"></div>
-            </div>
-            <div style="width: 300px;background-color: black; height: 2px;"></div>
-            <div class="d-flex bg-light">
-                <div style="width: 100px; height: 100px;"></div>
-                <div style="width: 2px;background-color: black; height: 100px;"></div>
-                <div style="width: 100px; height: 100px;"></div>
-                <div style="width: 2px;background-color: black; height: 100px;"></div>
-                <div style="width: 100px; height: 100px;"></div>
-            </div>
-            <div style="width: 300px;background-color: black; height: 2px;"></div>
-            <div class="d-flex bg-light">
-                <div style="width: 100px; height: 100px;"></div>
-                <div style="width: 2px;background-color: black; height: 100px;"></div>
-                <div style="width: 100px; height: 100px;"></div>
-                <div style="width: 2px;background-color: black; height: 100px;"></div>
-                <div style="width: 100px; height: 100px;"></div>
-            </div>
+        <div style="width: 320px;height: 310px;  margin-top: 20px; display: flex; gap: 4px; flex-wrap: wrap;">
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
+            <button class="box"></button>
         </div>
+        <div id="winner"
+            style="font-size: 50px; font-weight: bold; background-color: aqua; display: none; margin-top: 20px; padding: 20px; font-family: sans-serif;">
 
+        </div>
 
     </div>
 
@@ -77,6 +68,15 @@
             document.getElementById('First')
             console.log(document.getElementById('First').value);
             console.log(document.getElementById('Second').value);
+
+            const firstPlayername = document.getElementById('First').value.trim();
+            const secondPlayername = document.getElementById('Second').value.trim();
+
+
+            if (!firstPlayername || !secondPlayername) {
+                document.getElementById("error").innerText = `Both players are required`
+                return;
+            }
             document.getElementById('Firstplayer').value = document.getElementById('First')?.value || '';
             document.getElementById('Secondplayer').value = document.getElementById('Second')?.value || '';
             let myForm = document.getElementById('myForm')
@@ -86,6 +86,60 @@
             let gameForm = document.getElementById('gameForm')
             gameForm.style.display = 'flex'
         }
+
+        let boxes = document.querySelectorAll(".box");
+
+        let Firstplayer = true;
+
+        const winpatterns = [
+            [0, 1, 2],
+            [0, 3, 6],
+            [0, 4, 8],
+            [1, 4, 7],
+            [2, 5, 8],
+            [2, 4, 6],
+            [3, 4, 5],
+            [6, 7, 8],
+        ];
+
+        boxes.forEach((box) => {
+            box.addEventListener("click", () => {
+                if (Firstplayer) {
+                    box.innerText = "0";
+                    Firstplayer = false;
+                } else {
+                    box.innerText = "x";
+                    Firstplayer = true;
+                }
+
+                box.disabled = true;
+
+                checkwinner();
+            });
+        });
+
+        const checkwinner = () => {
+            for (let pattern of winpatterns) {
+                let pos1val = boxes[pattern[0]].innerText;
+                let pos2val = boxes[pattern[1]].innerText;
+                let pos3val = boxes[pattern[2]].innerText;
+                if (pos1val != "" && pos2val != "" && pos3val != "") {
+                    if (pos1val === pos2val && pos2val === pos3val) {
+                        console.log('winner', pos1val);
+
+                        let winner = document.getElementById('winner')
+                        console.log(winner);
+                        winner.style.display = 'block'
+
+                        document.getElementById("winner").innerText = `Winner ${pos1val == "x" ? document.getElementById('Secondplayer').value : document.getElementById('Firstplayer').value}`
+                        boxes.forEach((box) => {
+                            box.disabled = true
+                        })
+
+                    }
+                }
+            }
+        };
 
     </script>
 
